@@ -1,0 +1,5 @@
+.env
+/CSV_OUTPUT
+/JSON
+/__pycache__
+cek_openai.py
