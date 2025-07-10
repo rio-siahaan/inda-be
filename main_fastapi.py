@@ -1,22 +1,55 @@
 from fastapi import FastAPI, Request, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 import requests
 import logging
 import os
 import shutil
 from fastapi.responses import StreamingResponse
+from streamlit_read_csv import load_csv_files_with_metadata, create_or_update_vector_store
+import io
+from main_model import generate_response 
 
 app = FastAPI()
 
 # Logging config
 logging.basicConfig(level=logging.DEBUG)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Pydantic model untuk validasi request
 class InputData(BaseModel):
     response_text: str
     id: str
     selectedModel: str
+
+class CSVIngestRequest(BaseModel):
+    filename: str
+    content: str
+    
+@app.post("/ingest")
+async def ingest_csv(data: CSVIngestRequest):
+    try:
+        csv_bytes = data.content.encode("utf-8")
+        file_like = io.BytesIO(csv_bytes)
+        file_like.name = data.filename
+
+        documents = load_csv_files_with_metadata([file_like])
+        if not documents:
+            return {"status": "error", "message": "Gagal parsing dokumen"}
+
+        create_or_update_vector_store(documents, batch_size=25)
+
+        return {"status": "success", "message": f"{len(documents)} dokumen diproses"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 def send_to_main(response_text: str, session_id: str, selectedModel: str, persona: str, name: str) -> Optional[str]:
     main_url = 'http://localhost:8000/process_text'
@@ -43,21 +76,35 @@ def send_to_main(response_text: str, session_id: str, selectedModel: str, person
 def ping():
     return {"message": "pong"}
 
+# @app.post("/get_response")
+# async def get_response(data: InputData):
+#     response_text = data.response_text
+#     session_id = data.id
+#     selectedModel = data.selectedModel
+#     persona = data.persona
+#     name = data.name
+
+#     if response_text and session_id:
+#         logging.debug(f"Received response_text: {response_text} with id: {session_id} and model : {selectedModel}")
+#         processed_text, usage_metadata = send_to_main(response_text, session_id, selectedModel, persona, name)
+#         return {"status": "success", "processed_text": processed_text, "usage_metadata": usage_metadata}
+#     else:
+#         logging.error("No response_text or session_id provided")
+#         return {"status": "error", "message": "No response_text or session_id provided"}
+
 @app.post("/get_response")
 async def get_response(data: InputData):
-    response_text = data.response_text
-    session_id = data.id
-    selectedModel = data.selectedModel
-    persona = data.persona
-    name = data.name
+    if not data.response_text or not data.id:
+        return {"status": "error", "message": "Field tidak lengkap"}
 
-    if response_text and session_id:
-        logging.debug(f"Received response_text: {response_text} with id: {session_id} and model : {selectedModel}")
-        processed_text, usage_metadata = send_to_main(response_text, session_id, selectedModel, persona, name)
-        return {"status": "success", "processed_text": processed_text, "usage_metadata": usage_metadata}
-    else:
-        logging.error("No response_text or session_id provided")
-        return {"status": "error", "message": "No response_text or session_id provided"}
+    result, usage = generate_response(
+        data.response_text,
+        data.id,
+        data.selectedModel,
+        data.persona,
+        data.name
+    )
+    return {"status": "success", "processed_text": result, "usage_metadata": usage}
 
 @app.post("/convert-json-to-csv")
 async def convert_json_to_csv(file: UploadFile = File(...)):

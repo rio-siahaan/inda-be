@@ -11,7 +11,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain.cache import InMemoryCache
+from langchain_community.cache import InMemoryCache
 from langchain_core.globals import set_llm_cache
 from langchain.text_splitter import TokenTextSplitter
 from dotenv import load_dotenv
@@ -28,7 +28,7 @@ from qdrant_client.http.models import Distance, VectorParams, SparseVectorParams
 load_dotenv()
 
 # Inisialisasi FastAPI
-app = FastAPI()
+# app = FastAPI()
 
 # Setup cache Langchain
 set_llm_cache(InMemoryCache())
@@ -46,7 +46,7 @@ class TextRequest(BaseModel):
 
 # client = QdrantClient(path="/tmp/langchain_qdrant")
 client = QdrantClient(
-        url="https://b91cf208-0d2a-4ec6-8711-78a6163bbc32.europe-west3-0.gcp.cloud.qdrant.io",
+        url=os.getenv("QDRANT_URL"),
         api_key=os.getenv("QDRANT_API_KEY")
     )
 
@@ -120,6 +120,32 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
 
 def generate_response(user_question: str, session_id: str, selectedModel: str, persona: str, name: str):
     try:
+        client = QdrantClient(
+            url=os.getenv("QDRANT_URL"),
+            api_key=os.getenv("QDRANT_API_KEY")
+        )
+
+        # Buat collection jika belum ada
+        COLLECTION_NAME = "inda_collection"
+        if COLLECTION_NAME not in [c.name for c in client.get_collections().collections]:
+            client.recreate_collection(
+                collection_name=COLLECTION_NAME,
+                vectors_config=VectorParams(size=768, distance=Distance.COSINE),  # sesuaikan dengan embedding-mu
+            )
+
+        embeddings = GoogleGenerativeAIEmbeddings(
+            model="models/text-embedding-004",
+            google_api_key=os.getenv("GOOGLE_API_KEY")
+        )
+
+        vector_store = QdrantVectorStore(
+            client=client,
+            collection_name=COLLECTION_NAME,
+            embedding=embeddings,
+            retrieval_mode=RetrievalMode.DENSE,
+            vector_name="dense",
+        )
+
         rag_chain = get_conversational_chain(selectedModel, persona, name)
 
         conversational_rag_chain = RunnableWithMessageHistory(
@@ -161,7 +187,7 @@ def generate_response(user_question: str, session_id: str, selectedModel: str, p
 
         return f"Terjadi kesalahan: {str(e)}"
 
-@app.post("/process_text")
+# @app.post("/process_text")
 async def process_text(data: TextRequest):
     response_text = data.response_text
     id_chat = data.id_chat or str(uuid.uuid4())
@@ -179,3 +205,6 @@ async def process_text(data: TextRequest):
         "id_chat": id_chat,
         "usage_metadata": usage_metadata
     }
+
+# Di akhir file, pastikan hanya fungsi yang dipakai yang tersedia
+# __all__ = ["generate_response"]

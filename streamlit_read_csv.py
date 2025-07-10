@@ -81,7 +81,7 @@ def create_or_update_vector_store(documents, batch_size):
     )
     
     client = QdrantClient(
-        url="https://b91cf208-0d2a-4ec6-8711-78a6163bbc32.europe-west3-0.gcp.cloud.qdrant.io",
+        url=os.getenv("QDRANT_URL"),
         api_key=os.getenv("QDRANT_API_KEY"),
         timeout=60
     )
@@ -184,7 +184,7 @@ def handle_user_input(user_question):
     embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004", google_api_key=os.getenv("GOOGLE_API_KEY"))
     # client = QdrantClient(path="/tmp/langchain_qdrant")
     client = QdrantClient(
-        url="https://b91cf208-0d2a-4ec6-8711-78a6163bbc32.europe-west3-0.gcp.cloud.qdrant.io",
+        url=os.getenv("QDRANT_URL"),
         api_key=os.getenv("QDRANT_API_KEY"),
         timeout=60
     )
