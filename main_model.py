@@ -1,10 +1,10 @@
-from fastapi import FastAPI
+# from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
-import google.generativeai as genai
+# import google.generativeai as genai
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI 
 from langchain_groq import ChatGroq
-from langchain_deepseek import ChatDeepSeek
+# from langchain_deepseek import ChatDeepSeek
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
