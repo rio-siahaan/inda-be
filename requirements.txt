@@ -7,3 +7,4 @@ uuid
 fastapi
 uvicorn
 python-dotenv
+pandas
