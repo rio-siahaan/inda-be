@@ -3,3 +3,5 @@
 /JSON
 /__pycache__
 cek_openai.py
+streamlit_read_csv.py
+streamlit_csv.py
