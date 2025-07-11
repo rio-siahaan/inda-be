@@ -43,28 +43,21 @@ class TextRequest(BaseModel):
     name: str
 
 # client = QdrantClient(path="/tmp/langchain_qdrant")
-client = QdrantClient(
-        url=os.getenv("QDRANT_URL"),
-        api_key=os.getenv("QDRANT_API_KEY")
-    )
-
-# Buat collection jika belum ada
-COLLECTION_NAME = "inda_collection"
-if not client.collection_exist(COLLECTION_NAME):
-    client.create_collection(
-        collection_name=COLLECTION_NAME,
-        vectors_config=VectorParams(size=768, distance=Distance.COSINE),  # sesuaikan dengan embedding-mu
-    )
+# client = QdrantClient(
+#         url=os.getenv("QDRANT_URL"),
+#         api_key=os.getenv("QDRANT_API_KEY"),
+#         timeout=60
+#     )
 
 embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004", google_api_key=os.getenv("GOOGLE_API_KEY"))
 
-vector_store = QdrantVectorStore(
-    client=client,
-    collection_name="inda_collection",
-    embedding=embeddings,
-    retrieval_mode=RetrievalMode.DENSE,
-    vector_name="dense",
-)
+# vector_store = QdrantVectorStore(
+#     client=client,
+#     collection_name="inda_collection",
+#     embedding=embeddings,
+#     retrieval_mode=RetrievalMode.DENSE,
+#     vector_name="dense",
+# )
 
 def remove_emojis(text):
     """Remove emojis from text."""
@@ -133,10 +126,12 @@ def generate_response(user_question: str, session_id: str, selectedModel: str, p
 
         # Buat collection jika belum ada
         COLLECTION_NAME = "inda_collection"
-        if COLLECTION_NAME not in [c.name for c in client.get_collections().collections]:
-            client.recreate_collection(
+        if client.collection_exists(COLLECTION_NAME):
+            client.create_collection(
                 collection_name=COLLECTION_NAME,
-                vectors_config=VectorParams(size=768, distance=Distance.COSINE),  # sesuaikan dengan embedding-mu
+                vectors_config={
+                    "dense": VectorParams(size=768, distance=Distance.COSINE)
+                }
             )
 
         embeddings = GoogleGenerativeAIEmbeddings(
