@@ -7,7 +7,7 @@ import logging
 import os
 import shutil
 from fastapi.responses import StreamingResponse
-from streamlit_read_csv import load_csv_files_with_metadata, create_or_update_vector_store
+from load_qdrant import load_csv_files_with_metadata, create_or_update_vector_store
 import io
 from main_model import generate_response 
 
