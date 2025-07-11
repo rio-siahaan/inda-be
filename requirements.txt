@@ -9,3 +9,4 @@ uvicorn
 python-dotenv
 pandas
 langchain_qdrant
+langchain_groq
