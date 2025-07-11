@@ -1,10 +1,8 @@
 # from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
-# import google.generativeai as genai
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI 
 from langchain_groq import ChatGroq
-# from langchain_deepseek import ChatDeepSeek
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -20,9 +18,9 @@ import uuid
 import os
 
 # Untuk Qdrant
-from langchain_qdrant import QdrantVectorStore, RetrievalMode, FastEmbedSparse
+from langchain_qdrant import QdrantVectorStore, RetrievalMode
 from qdrant_client import QdrantClient
-from qdrant_client.http.models import Distance, VectorParams, SparseVectorParams
+from qdrant_client.http.models import Distance, VectorParams
 
 
 load_dotenv()
