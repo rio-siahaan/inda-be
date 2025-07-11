@@ -48,6 +48,14 @@ client = QdrantClient(
         api_key=os.getenv("QDRANT_API_KEY")
     )
 
+# Buat collection jika belum ada
+COLLECTION_NAME = "inda_collection"
+if COLLECTION_NAME not in [c.name for c in client.get_collections().collections]:
+    client.recreate_collection(
+        collection_name=COLLECTION_NAME,
+        vectors_config=VectorParams(size=768, distance=Distance.COSINE),  # sesuaikan dengan embedding-mu
+    )
+
 embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004", google_api_key=os.getenv("GOOGLE_API_KEY"))
 
 vector_store = QdrantVectorStore(

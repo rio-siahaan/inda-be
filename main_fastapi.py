@@ -51,26 +51,26 @@ async def ingest_csv(data: CSVIngestRequest):
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
-def send_to_main(response_text: str, session_id: str, selectedModel: str, persona: str, name: str) -> Optional[str]:
-    main_url = 'http://localhost:8000/process_text'
-    payload = {'response_text': response_text, 'id_chat': session_id, 'selectedModel': selectedModel, 'persona': persona, 'name': name}
+# def send_to_main(response_text: str, session_id: str, selectedModel: str, persona: str, name: str) -> Optional[str]:
+#     main_url = 'http://localhost:8000/process_text'
+#     payload = {'response_text': response_text, 'id_chat': session_id, 'selectedModel': selectedModel, 'persona': persona, 'name': name}
 
-    try:
-        logging.debug(f"Sending to main.py. Payload: {payload}")
-        response = requests.post(main_url, json=payload)
-        logging.debug(f"Main.py response status: {response.status_code}, Response: {response.text}")
+#     try:
+#         logging.debug(f"Sending to main.py. Payload: {payload}")
+#         response = requests.post(main_url, json=payload)
+#         logging.debug(f"Main.py response status: {response.status_code}, Response: {response.text}")
 
-        if response.status_code == 200:
-            response_json = response.json()
-            processed_text = response_json.get('processed_text', '')
-            usage_metadata = response_json.get('usage_metadata', {}) 
-            return processed_text, usage_metadata
-        else:
-            logging.error(f"Failed to get processed response from main.py. Status code: {response.status_code}")
-            return None
-    except Exception as e:
-        logging.error(f"Error sending data to main.py: {str(e)}")
-        return None
+#         if response.status_code == 200:
+#             response_json = response.json()
+#             processed_text = response_json.get('processed_text', '')
+#             usage_metadata = response_json.get('usage_metadata', {}) 
+#             return processed_text, usage_metadata
+#         else:
+#             logging.error(f"Failed to get processed response from main.py. Status code: {response.status_code}")
+#             return None
+#     except Exception as e:
+#         logging.error(f"Error sending data to main.py: {str(e)}")
+#         return None
 
 @app.get("/ping")
 def ping():
