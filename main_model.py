@@ -50,8 +50,8 @@ client = QdrantClient(
 
 # Buat collection jika belum ada
 COLLECTION_NAME = "inda_collection"
-if COLLECTION_NAME not in [c.name for c in client.get_collections().collections]:
-    client.recreate_collection(
+if not client.collection_exist(COLLECTION_NAME):
+    client.create_collection(
         collection_name=COLLECTION_NAME,
         vectors_config=VectorParams(size=768, distance=Distance.COSINE),  # sesuaikan dengan embedding-mu
     )
