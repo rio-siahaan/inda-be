@@ -11,3 +11,4 @@ pandas
 langchain_qdrant
 langchain_groq
 python-multipart
+gunicorn
