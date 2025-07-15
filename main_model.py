@@ -126,7 +126,7 @@ def generate_response(user_question: str, session_id: str, selectedModel: str, p
 
         # Buat collection jika belum ada
         COLLECTION_NAME = "inda_collection"
-        if client.collection_exists(COLLECTION_NAME):
+        if not client.collection_exists(COLLECTION_NAME):
             client.create_collection(
                 collection_name=COLLECTION_NAME,
                 vectors_config={
