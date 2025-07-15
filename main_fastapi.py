@@ -100,11 +100,11 @@ async def get_response(data: InputData):
         return {"status": "error", "message": "Field tidak lengkap"}
 
     result, usage = generate_response(
-        data.response_text,
-        data.id,
-        data.selectedModel,
-        data.persona,
-        data.name
+        user_question = data.response_text,
+        session_id = data.id,
+        selectedModel = data.selectedModel,
+        persona = data.persona,
+        name = data.name
     )
     return {"status": "success", "processed_text": result, "usage_metadata": usage}
 
