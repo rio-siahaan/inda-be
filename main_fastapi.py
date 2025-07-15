@@ -29,6 +29,8 @@ class InputData(BaseModel):
     response_text: str
     id: str
     selectedModel: str
+    name: str
+    persona: str
 
 class CSVIngestRequest(BaseModel):
     filename: str
