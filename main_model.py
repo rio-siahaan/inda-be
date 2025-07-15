@@ -63,7 +63,7 @@ def remove_emojis(text):
     """Remove emojis from text."""
     return re.sub(r'[^\x00-\x7F]+', '', text)
 
-def get_conversational_chain(selectedModel : str, persona: str, name: str):
+def get_conversational_chain(selectedModel : str, persona: str, name: str, vector_store):
     prompt_template = """
     Anda adalah INDA (Intelligent Data Assistant) yang menyediakan data dari BPS Provinsi Sumatera Utara yang hanya berfokus pada layanan penyediaan data. Anda juga dapat menjawab salam pembuka dan salam penutup selayaknya pelayan virtual.
     Jawablah dengan singkat dan akurat.
@@ -147,7 +147,7 @@ def generate_response(user_question: str, session_id: str, selectedModel: str, p
             vector_name="dense",
         )
 
-        rag_chain = get_conversational_chain(selectedModel, persona, name)
+        rag_chain = get_conversational_chain(selectedModel, persona, name, vector_store)
 
         conversational_rag_chain = RunnableWithMessageHistory(
             rag_chain,
