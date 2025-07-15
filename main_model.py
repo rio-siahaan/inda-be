@@ -182,11 +182,11 @@ def generate_response(user_question: str, session_id: str, selectedModel: str, p
 
         # Deteksi Rate Limit / Quota Error
         if "rate limit" in error_msg or "quota" in error_msg or "429" in error_msg:
-            return "Maaf, layanan mencapai batas penggunaan (rate limit). Silakan coba lagi nanti."
+            return "Maaf, layanan mencapai batas penggunaan (rate limit). Silakan coba lagi nanti.", {}
         elif "503" in error_msg or "unavailable" in error_msg:
-            return "Maaf, layanan sementara tidak tersedia. Mohon coba beberapa saat lagi."
+            return "Maaf, layanan sementara tidak tersedia. Mohon coba beberapa saat lagi.", {}
 
-        return f"Terjadi kesalahan: {str(e)}"
+        return f"Terjadi kesalahan: {str(e)}", {}
 
 # @app.post("/process_text")
 async def process_text(data: TextRequest):
