@@ -147,7 +147,7 @@ def generate_response(user_question: str, session_id: str, selectedModel: str, p
             vector_name="dense",
         )
 
-        rag_chain = get_conversational_chain(selectedModel, persona, name, vector_store)
+        rag_chain = get_conversational_chain(selectedModel = selectedModel, persona = persona, name = name, vector_store = vector_store)
 
         conversational_rag_chain = RunnableWithMessageHistory(
             rag_chain,
