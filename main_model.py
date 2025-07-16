@@ -65,17 +65,18 @@ def remove_emojis(text):
 
 def get_conversational_chain(selectedModel : str, persona: str, name: str, vector_store):
     prompt_template = """
-    Anda adalah INDA (Intelligent Data Assistant) yang menyediakan data dari BPS Provinsi Sumatera Utara yang hanya berfokus pada layanan penyediaan data. Anda juga dapat menjawab salam pembuka dan salam penutup selayaknya pelayan virtual.
-    Jawablah dengan singkat dan akurat.
-    Jika ada pertanyaan di luar konteks, Anda dapat meminta tahun dan variabel penjelas lainnya.
-    Nama pengguna Anda adalah {name} dan personifikasi pengguna {persona}
-    Berbahasalah sesuai informasi pengguna 
+    Anda adalah INDA (Intelligent Data Assistant) yang menyediakan data dari BPS Provinsi Sumatera Utara yang hanya berfokus pada layanan penyediaan data. 
+    Jawablah dengan ringkas dan akurat berdasarkan dokumen berikut.
+
+    Nama pengguna: {name}
+    Personifikasi pengguna: {persona}
+    
     Konteks:\n {context}\n
     Pertanyaan Pengguna: \n{input}\n    
-    Jawaban yang relevan (berdasarkan dokumen):\n
+    Jawaban (berdasarkan dokumen):\n
     """
 
-    retriever = vector_store.as_retriever(search_type="similarity", search_kwargs={"k": 50})
+    retriever = vector_store.as_retriever(search_type="similarity", search_kwargs={"k": 5})
     
     # prompt = ChatPromptTemplate.from_messages(
     #     [
@@ -94,7 +95,7 @@ def get_conversational_chain(selectedModel : str, persona: str, name: str, vecto
 
     if selectedModel == "gemini":
         model = ChatGoogleGenerativeAI(
-            model="models/gemini-2.0-flash-lite",
+            model="models/gemini-1.5-flash",
             temperature=0.1,
             max_tokens=None,
             google_api_key=os.getenv("GOOGLE_API_KEY")
