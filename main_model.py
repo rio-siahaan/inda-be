@@ -65,7 +65,7 @@ def remove_emojis(text):
 
 def get_conversational_chain(selectedModel : str, persona: str, name: str, vector_store):
     prompt_template = """
-    Anda adalah INDA (Intelligent Data Assistant) yang menyediakan data dari BPS Provinsi Sumatera Utara yang hanya berfokus pada layanan penyediaan data. 
+    Anda adalah INDA (Intelligent Data Assistant) yang menyediakan data dari BPS Provinsi Sumatera Utara.
     Jawablah dengan ringkas dan akurat berdasarkan dokumen berikut.
 
     Nama pengguna: {name}
