@@ -95,7 +95,7 @@ def get_conversational_chain(selectedModel : str, persona: str, name: str, vecto
 
     if selectedModel == "gemini":
         model = ChatGoogleGenerativeAI(
-            model="models/gemini-1.5-flash",
+            model="models/gemini-2.0-flash-lite",
             temperature=0.1,
             max_tokens=None,
             google_api_key=os.getenv("GOOGLE_API_KEY")
@@ -137,7 +137,7 @@ def generate_response(user_question: str, session_id: str, selectedModel: str, p
             )
 
         embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/gemini-embedding-001",
+            model="models/text-embedding-004",
             google_api_key=os.getenv("GOOGLE_API_KEY")
         )
 
