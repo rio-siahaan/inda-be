@@ -49,7 +49,7 @@ class TextRequest(BaseModel):
 #         timeout=60
 #     )
 
-embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004", google_api_key=os.getenv("GOOGLE_API_KEY"))
+# embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004", google_api_key=os.getenv("GOOGLE_API_KEY"))
 
 # vector_store = QdrantVectorStore(
 #     client=client,
@@ -122,7 +122,8 @@ def generate_response(user_question: str, session_id: str, selectedModel: str, p
     try:
         client = QdrantClient(
             url=os.getenv("QDRANT_URL"),
-            api_key=os.getenv("QDRANT_API_KEY")
+            api_key=os.getenv("QDRANT_API_KEY"),
+            timeout = 60
         )
 
         # Buat collection jika belum ada
@@ -136,7 +137,7 @@ def generate_response(user_question: str, session_id: str, selectedModel: str, p
             )
 
         embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/text-embedding-004",
+            model="models/gemini-embedding-001",
             google_api_key=os.getenv("GOOGLE_API_KEY")
         )
 
